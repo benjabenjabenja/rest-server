@@ -1,48 +1,26 @@
-const get_elements = (req, res) => {
+const { response, request } = require('express');
+const get_elements = (req = request, res = response) => {
     res.json({
         message: "GET - Api rest sucess",
         data: []
     });
 }
-const put_elements = (req, res) => {
-    const body = req['body'];
-    console.log({body});
+const put_elements = (req = request, res = response) => {
+    
     res.json({
         message: "PUT - Api rest sucess",
-        data: []
+        data: {}
 
     });
 }
-const post_elements = (req, res) => {
-    if (!!!el) {
-        res.status(400).json({
-            message: 'Bad request',
-            data: null,
-            error: {
-                message: "property element can't be undefined or null"
-            }
-        });
-        return;
-    }
-    let el = req['body']?.['element'];
-    el.id++;
-    res.json({
+const post_elements = (req = request, res = response) => {
+    console.log(req.body);
+    res.status(201).json({
         message: "POST - Api rest sucess",
         data: {}
     });
 }
-const delete_element = (req, res) => {
-    if (!!!el) {
-        res.status(400).json({
-            message: 'Bad request',
-            data: null,
-            error: {
-                message: "property element can't be undefined or null"
-            }
-        })
-        return;
-    }  
-    const el = req['body']?.['element'];
+const delete_element = (req = request, res = response) => {
     res.json({
         message: "DELETE - Api rest success",
         data: {}
