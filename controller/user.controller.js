@@ -1,6 +1,7 @@
 const { response, request } = require('express');
 const { log } = require('../helpers/log');
 const user_model = require('../models/user');
+const bcrypt = require('bcryptjs');
 
 /**
  * Sends a JSON response with a success message
@@ -26,13 +27,44 @@ const get_user = (req = request, res = response) => {
  * the client. It is an instance of the `response` object in the Express framework.
  */
 const post_user = async (req = request, res = response) => {
-    const { user } = req.body;
-    const new_user = new user_model();
-    console.log(new_user);
-    res.status(201).json({
-        message: "POST - USER SUCCESS",
-        data: {...element}
-    });
+    const { username, password, email, role, image = null, google = false } = req.body.user;    
+    try {
+        let new_user = new user_model({
+            username,
+            password,
+            email,
+            role,
+            image,
+            google
+        });
+        // verify email exist
+
+        // encrypyt password
+        const salt = bcrypt.genSaltSync();
+        const { password: encrypted_password } = new_user;
+        new_user.password = bcrypt.hashSync(encrypted_password, salt);
+        log(new_user.password);
+        // save db
+        await new_user.save();
+
+        res.status(201).json({
+            message: "POST - USER SUCCESS",
+            data: {
+                username,
+                email,
+                role,
+                image,
+                google
+            }
+        });
+    } catch (e) { 
+        log(e);
+        res.status(500).json({
+            message: 'ERROR - error crearting user',
+            data: {}
+        });
+    }
+
 }
 const put_user = (req = request, res = response) => {
     res.json({

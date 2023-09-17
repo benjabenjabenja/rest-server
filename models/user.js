@@ -30,6 +30,4 @@ const user_schema = new Schema({
     }
 
 });
-
-//const Model = model('User', user_schema);
-module.exports =  model('User', user_schema);// Model.createCollection();
+module.exports = model('User', user_schema);
