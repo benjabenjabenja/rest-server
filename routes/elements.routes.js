@@ -9,10 +9,15 @@ const {
 
 const elements_router = new Router();
 
-elements_router.get('/get', get_elements );
+// get
+elements_router.get('/get', get_elements);
+// put
 elements_router.put('/put', put_elements);
+// post
 elements_router.post('/post', post_elements);
+// delete
 elements_router.delete('/delete', delete_element);
-elements_router.delete('/delete', patch_element);
+// patch
+elements_router.patch('/delete', patch_element);
 
 module.exports = elements_router;
