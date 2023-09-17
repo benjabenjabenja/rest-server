@@ -3,7 +3,8 @@ const {
     get_elements,
     post_elements,
     put_elements,
-    delete_element
+    delete_element,
+    patch_element
 } = require('../controller/elements.controller');
 
 const elements_router = new Router();
@@ -12,5 +13,6 @@ elements_router.get('/get', get_elements );
 elements_router.put('/put', put_elements);
 elements_router.post('/post', post_elements);
 elements_router.delete('/delete', delete_element);
+elements_router.delete('/delete', patch_element);
 
 module.exports = elements_router;

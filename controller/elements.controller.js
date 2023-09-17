@@ -26,9 +26,16 @@ const delete_element = (req = request, res = response) => {
         data: {}
     });
 }
+const patch_element = (req = request, response = response) => {
+    res.json({
+        message: "PATCH - Api Rest Success",
+        data: {}
+    }); 
+}
 module.exports = {
     get_elements,
     put_elements,
     post_elements,
-    delete_element
+    delete_element,
+    patch_element
 }
