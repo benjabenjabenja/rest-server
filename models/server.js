@@ -24,6 +24,8 @@ class Server {
     middelwares = () => {
         // CORS
         this.app.use(cors());
+        // lectura y parseo del body
+        this.app.use(express.json());
         // public directory
         this.app.use(express.static('public'));
     }

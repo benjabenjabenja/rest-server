@@ -1,4 +1,6 @@
 const { response, request } = require('express');
+const { log } = require('../helpers/log');
+
 /**
  * GET request handler for an API that returns a success message and
  * an empty array of data.
@@ -8,9 +10,20 @@ const { response, request } = require('express');
  * the client. It is an instance of the `response` object in the Express framework.
  */
 const get_elements = (req = request, res = response) => {
+    // los GET no se les puede mandar el "body"
+    // asique sacamos los datos de la req.query
+    const query_params = req.query;
+    const { apiKey = '', user = '', id_user_rol = 0, verify = false } = query_params;
+    
     res.json({
         message: "GET - Api rest sucess",
-        data: []
+        data: [],
+        params: {
+            apiKey,
+            user,
+            id_user_rol,
+            verify
+        } || {}
     });
 }
 /**
@@ -23,10 +36,16 @@ const get_elements = (req = request, res = response) => {
  * `json()` which is used to send a JSON response.
  */
 const put_elements = (req = request, res = response) => {
+    const { id } = req.params;
+    const { nombre, id:_id } = req.body;
     
     res.json({
         message: "PUT - Api rest sucess",
-        data: {}
+        data: {
+            nombre,
+            descripcion: `Element id: ${+id || _id} updated successfully`,
+            id
+        }
 
     });
 }
@@ -39,10 +58,11 @@ const put_elements = (req = request, res = response) => {
  * the client. It is an instance of the `response` object in the Express framework.
  */
 const post_elements = (req = request, res = response) => {
-    console.log(req.body);
+    const { element } = req.body;
+    // log(element);
     res.status(201).json({
         message: "POST - Api rest sucess",
-        data: {}
+        data: {...element}
     });
 }
 /**
