@@ -2,7 +2,6 @@ const express = require('express');
 const { log } = require('../helpers/log');
 const cors = require('cors');
 const { connection_mongodb } = require('../database/config');
-
 const { ROOT_PATH_API } = process?.env;
 
 class Server {
@@ -14,13 +13,11 @@ class Server {
         this.port = process?.env.PORT || 3001;
         // declare routes
         this.elements_routes_path = `${ROOT_PATH_API}/elements`;
-
+        this.user_routes_path = `${ROOT_PATH_API}/user`;
         // conneccion db
         this._db_connect();
-
         // middelwares
         this.middelwares();
-
         // routes of app
         this.routes();
     }
@@ -36,6 +33,7 @@ class Server {
 
     routes = () => {
         this.app.use(`${this.elements_routes_path}`, require('../routes/elements.routes'))       
+        this.app.use(`${this.user_routes_path}`, require('../routes/user.routes'))       
         this.app.get('*', (req, res) => { res.status(404).send('404 | Not Found') });
     }
 

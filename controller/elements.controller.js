@@ -1,6 +1,5 @@
 const { response, request } = require('express');
-const { log } = require('../helpers/log');
-
+// const { log } = require('../helpers/log');
 /**
  * GET request handler for an API that returns a success message and
  * an empty array of data.
@@ -58,8 +57,7 @@ const put_elements = (req = request, res = response) => {
  * the client. It is an instance of the `response` object in the Express framework.
  */
 const post_elements = (req = request, res = response) => {
-    const { element } = req.body;
-    // log(element);
+    const { element } = req.body;    
     res.status(201).json({
         message: "POST - Api rest sucess",
         data: {...element}
