@@ -1,6 +1,7 @@
 const express = require('express');
 const { log } = require('../helpers/log');
 const cors = require('cors');
+const { connection_mongodb } = require('../database/config');
 
 const { ROOT_PATH_API } = process?.env;
 
@@ -13,6 +14,9 @@ class Server {
         this.port = process?.env.PORT || 3001;
         // declare routes
         this.elements_routes_path = `${ROOT_PATH_API}/elements`;
+
+        // conneccion db
+        this._db_connect();
 
         // middelwares
         this.middelwares();
@@ -36,5 +40,6 @@ class Server {
     }
 
     start_server = () => this.app.listen(this.port, () => log(`App running in PORT :: ${this.port}`));
+    _db_connect = async () => await connection_mongodb(); 
 }
 module.exports = Server;
