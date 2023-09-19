@@ -146,7 +146,6 @@ const delete_user = async (req = request, res = response) => {
         // await user_model.deleteOne({ _id: id });
         const deleted_user =  await user_model.findByIdAndUpdate(id, { active: false });
         await deleted_user.save();
-        log(deleted_user);
         res.json({
             message: 'DELETE - USER SUCCESS',
             data: `User ${id} deleted successfully`
