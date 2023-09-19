@@ -40,7 +40,10 @@ user_router.post('/post', [
     validate_fields
 ],post_user);
 // delete
-user_router.delete('/delete', delete_user);
+user_router.delete('/delete/:id', [
+    check('id', 'Invalid id').isMongoId(),
+    check('id').custom(validate_user_id)
+], delete_user);
 // patch
 user_router.patch('/patch', patch_user);
 

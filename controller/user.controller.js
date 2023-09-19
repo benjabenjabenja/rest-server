@@ -96,7 +96,7 @@ const post_user = async (req = request, res = response) => {
  * `json()` which is used to send a JSON response.
  */
 const put_user = async (req = request, res = response) => {
-    const { id } = req.params;
+    const { id } = req.query;
     const { _id, password, google, email, ...user_param } = req.body;
 
     // encrypyt password
@@ -140,11 +140,24 @@ const put_user = async (req = request, res = response) => {
  * the client. It contains methods and properties that allow you to control the response, such as
  * `json()` which is used to send a JSON response.
  */
-const delete_user = (req = request, res = response) => {
-    res.json({
-        message: 'DELETE - USER SUCCESS',
-        data: {}
-    });
+const delete_user = async (req = request, res = response) => {
+    try {
+        const { id } = req.params;
+        // await user_model.deleteOne({ _id: id });
+        const deleted_user =  await user_model.findByIdAndUpdate(id, { active: false });
+        await deleted_user.save();
+        log(deleted_user);
+        res.json({
+            message: 'DELETE - USER SUCCESS',
+            data: `User ${id} deleted successfully`
+        });
+    } catch (e) {
+        res.status(500).json({
+            message: 'DELETE - USER ERROR',
+            data: {},
+            error: e
+        });
+    }
 }
 /**
  * Handles a PATCH request for updating a user
