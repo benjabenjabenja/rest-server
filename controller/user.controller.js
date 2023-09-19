@@ -2,6 +2,7 @@ const { response, request } = require('express');
 const { log } = require('../helpers/log');
 const user_model = require('../models/user');
 const bcrypt = require('bcryptjs');
+const { encrypt_pass } = require('../helpers/encrypt');
 
 /**
  * Sends a JSON response with a success message
@@ -12,11 +13,25 @@ const bcrypt = require('bcryptjs');
  * the client. It contains methods and properties that allow you to control the response, such as
  * `json()` which is used to send a JSON response.
  */
-const get_user = (req = request, res = response) => {
-    res.json({
-        message: "GET - USER SUCCESS",
-        data: {}
-    });
+const get_users = async (req = request, res = response) => {
+    try {
+        // Get all users from database
+        const users = await user_model.find({ active: true });
+        !!users && res.json({
+            message: "GET - USER SUCCESS",
+            data: []
+        });
+        res.json({
+            message: "GET - USER SUCCESS",
+            data: []
+        });
+    } catch (e) {
+        res.status(400).json({
+            message: "GET - USER SUCCESS",
+            data: {},
+            error: e
+        });
+    }
 }
 /**
  * Logs the request body and sends a JSON response with a success message.
@@ -27,8 +42,9 @@ const get_user = (req = request, res = response) => {
  * the client. It is an instance of the `response` object in the Express framework.
  */
 const post_user = async (req = request, res = response) => {
-    const { username, password, email, role, image = null, google = false } = req.body.user;    
+        
     try {
+        const { username, password, email, role, image = '', google = false } = req.body;    
         let new_user = new user_model({
             username,
             password,
@@ -37,48 +53,97 @@ const post_user = async (req = request, res = response) => {
             image,
             google
         });
-        // verify email exist
 
         // encrypyt password
-        const salt = bcrypt.genSaltSync();
-        const { password: encrypted_password } = new_user;
-        new_user.password = bcrypt.hashSync(encrypted_password, salt);
-        log(new_user.password);
+        new_user.password = encrypt_pass(password);
+
         // save db
         await new_user.save();
 
-        res.status(201).json({
+        return res.status(201).json({
             message: "POST - USER SUCCESS",
-            data: {
-                username,
-                email,
-                role,
-                image,
-                google
-            }
+            data: new_user
         });
     } catch (e) { 
         log(e);
         res.status(500).json({
             message: 'ERROR - error crearting user',
-            data: {}
+            data: {},
+            error: e
         });
     }
 
 }
-const put_user = (req = request, res = response) => {
-    res.json({
-        message: 'PUT - USER SUCCESS',
-        data: {}
-    });
-}
+/**
+ * Handles a PUT request for updating a user and
+ * returns a JSON response with a success message and an empty data object.
+ * @param [req] - The `req` parameter represents the request object, which contains information about
+ * the incoming HTTP request made by the client. It includes details such as the request headers,
+ * request parameters, request body, etc.
+ * @param [res] - The `res` parameter is the response object that is used to send a response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `json()` which is used to send a JSON response.
+ */
+const put_user = async (req = request, res = response) => {
+    const { id } = req.params;
+    const { _id, password, google, email, ...user_param } = req.body;
 
+    // encrypyt password
+    if (!!password) {
+        user_param.password = encrypt_pass(password);
+    }
+    try {
+        const updated_user = await user_model.findByIdAndUpdate(id, user_param);
+        if (!!updated_user) {
+            // commit changes
+            await updated_user.save();
+            res.json({
+                message: 'PUT - USER SUCCESS',
+                data: updated_user
+            });
+        }
+        // null or undefined
+        !!!updated_user && res.status(404).json({
+            message: 'PUT - USER ERROR',
+            data: {},
+            error: `User ${id} not found`
+        });
+
+    } catch (e) {
+        log(e);
+        res.status(500).json({
+            message: 'PUT - USER ERROR',
+            data: {},
+            error: e
+        });
+    }
+
+}
+/**
+ * Handles a DELETE request for deleting a
+ * user and returns a JSON response with a success message and an empty data object.
+ * @param [req] - The `req` parameter represents the request object, which contains information about
+ * the incoming HTTP request made by the client. It includes details such as the request method,
+ * headers, URL, query parameters, and body.
+ * @param [res] - The `res` parameter is the response object that is used to send a response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `json()` which is used to send a JSON response.
+ */
 const delete_user = (req = request, res = response) => {
     res.json({
         message: 'DELETE - USER SUCCESS',
         data: {}
     });
 }
+/**
+ * Handles a PATCH request for updating a user
+ * and returns a JSON response with a success message and an empty data object.
+ * @param [req] - The `req` parameter represents the request object, which contains information about
+ * the incoming HTTP request such as headers, query parameters, and request body.
+ * @param [res] - The `res` parameter is the response object that is used to send a response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `json()` which is used to send a JSON response.
+ */
 const patch_user = (req = reques, res = response) => {
     res.json({
         message: 'PATCH - USER SUCCESS',
@@ -87,7 +152,7 @@ const patch_user = (req = reques, res = response) => {
 }
 
 module.exports = {
-    get_user,
+    get_users,
     put_user,
     post_user,
     delete_user,

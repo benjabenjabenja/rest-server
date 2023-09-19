@@ -1,19 +1,37 @@
 const { Router } = require('express');
+const { check } = require('express-validator');
 const {
-    get_user,
+    get_users,
     put_user,
     post_user,
     delete_user,
     patch_user
 } = require('../controller/user.controller');
+const ROLES = ['ADMIN_ROLE', 'USER_ROLE'];
+const { validate_fields, verify_email_exist } = require('../middelwares/email_validator');
+const { validate_rol } = require('../helpers/db-validators');
 const user_router = new Router();
 
 // get
-user_router.get('/get', get_user);
+user_router.get('/get', get_users);
 // put
-user_router.put('/put/:id', put_user);
+user_router.put('/put/:id', [
+    check('id', 'Invalid id').isMongoId(),
+    check('rol').custom(validate_rol),
+    check('email', 'Invalid e-mail').isEmail(),
+    validate_fields
+],put_user);
 // post
-user_router.post('/post', post_user);
+user_router.post('/post', [
+    check('username', 'username is required').not().isEmpty(),
+    check('password', 'password is required').not().isEmpty(),
+    check('password', 'must have at least 4 characters').isLength({ min: 4 }),
+    check('email', 'Invalid e-mail').isEmail(),
+    check('role', 'invalid role').isIn(ROLES),
+    check('rol').custom(validate_rol),
+    verify_email_exist,
+    validate_fields
+],post_user);
 // delete
 user_router.delete('/delete', delete_user);
 // patch
