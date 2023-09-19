@@ -8,8 +8,14 @@ const {
     patch_user
 } = require('../controller/user.controller');
 const ROLES = ['ADMIN_ROLE', 'USER_ROLE'];
-const { validate_fields, verify_email_exist } = require('../middelwares/email_validator');
-const { validate_rol } = require('../helpers/db-validators');
+const {
+    validate_fields,
+    verify_email_exist
+} = require('../middelwares/email_validator');
+const {
+    validate_rol,
+    validate_user_id
+} = require('../helpers/db-validators');
 const user_router = new Router();
 
 // get
@@ -17,6 +23,7 @@ user_router.get('/get', get_users);
 // put
 user_router.put('/put/:id', [
     check('id', 'Invalid id').isMongoId(),
+    check('id').custom(validate_user_id),
     check('rol').custom(validate_rol),
     check('email', 'Invalid e-mail').isEmail(),
     validate_fields

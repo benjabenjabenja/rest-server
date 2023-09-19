@@ -4,24 +4,35 @@ const user_model = require('../models/user');
 const bcrypt = require('bcryptjs');
 const { encrypt_pass } = require('../helpers/encrypt');
 
+
 /**
- * Sends a JSON response with a success message
- * and an empty data object.
- * @param [req] - The `req` parameter represents the HTTP request object, which contains information
- * about the incoming request such as the request headers, request parameters, request body, etc.
- * @param [res] - The `res` parameter is the response object that is used to send a response back to
- * the client. It contains methods and properties that allow you to control the response, such as
- * `json()` which is used to send a JSON response.
+ * Retrieves all users from the database and returns them as a JSON response,
+ * along with a success message.
+ * @param [req] - The `req` parameter represents the request object, which contains information about
+ * the incoming HTTP request such as headers, query parameters, and request body.
+ * @param [res] - The `res` parameter is the response object that is used to send the response back to
+ * the client. It is an instance of the `response` object from the Express framework.
  */
 const get_users = async (req = request, res = response) => {
     try {
+        const { limit = 5, offset = 0, active = true } = req.query;
         // Get all users from database
-        const users = await user_model.find({ active: true });
+        const filter = !!active ? { active } : null;
+        const [total,users] = await Promise.all([
+            user_model.countDocuments(filter),
+            user_model.find(filter).skip(+offset).limit(+limit)
+        ]);
+
         !!users && res.json({
             message: "GET - USER SUCCESS",
-            data: []
+            data: {
+                users,
+                total,
+                limit: +limit,
+                offset: +offset
+            }
         });
-        res.json({
+        !!!users && res.json({
             message: "GET - USER SUCCESS",
             data: []
         });

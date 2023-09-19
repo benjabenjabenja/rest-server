@@ -6,7 +6,14 @@ const validate_rol = async (role = '') => {
         throw new Error(`${role} is not register`);
     }
 }
+const validate_user_id = async (id = '') => {
+    const if_exist = await Role.findById({ id });
+    if (!!!if_exist) {
+        throw new Error(`User ${id} not found`);
+    }
+}
 
 module.exports = {
-    validate_rol 
+    validate_rol,
+    validate_user_id
 }
