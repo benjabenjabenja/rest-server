@@ -14,6 +14,7 @@ class Server {
         // declare routes
         this.elements_routes_path = `${ROOT_PATH_API}/elements`;
         this.user_routes_path = `${ROOT_PATH_API}/user`;
+        this.auth_path = `${ROOT_PATH_API}/auth`;
         // conneccion db
         this._db_connect();
         // middelwares
@@ -32,8 +33,9 @@ class Server {
     }
 
     routes = () => {
-        this.app.use(`${this.elements_routes_path}`, require('../routes/elements.routes'))       
-        this.app.use(`${this.user_routes_path}`, require('../routes/user.routes'))       
+        this.app.use(`${this.elements_routes_path}`, require('../routes/elements.routes'));       
+        this.app.use(`${this.user_routes_path}`, require('../routes/user.routes'));     
+        this.app.use(`${this.auth_path}`, require('../routes/auth'));
         this.app.get('*', (req, res) => { res.status(404).send('404 | Not Found') });
     }
 
