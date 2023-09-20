@@ -2,6 +2,7 @@ const express = require('express');
 const { log } = require('../helpers/log');
 const cors = require('cors');
 const { connection_mongodb } = require('../database/config');
+const { validate_jwt } = require('../middlewares/jwt.middleware');
 const { ROOT_PATH_API } = process?.env;
 
 class Server {

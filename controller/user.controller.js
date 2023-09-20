@@ -64,10 +64,8 @@ const post_user = async (req = request, res = response) => {
             image,
             google
         });
-
         // encrypyt password
         new_user.password = encrypt_pass(password);
-
         // save db
         await new_user.save();
 
@@ -131,6 +129,34 @@ const put_user = async (req = request, res = response) => {
 
 }
 /**
+ * Handles a PATCH request for updating a user
+ * and returns a JSON response with a success message and an empty data object.
+ * @param [req] - The `req` parameter represents the request object, which contains information about
+ * the incoming HTTP request such as headers, query parameters, and request body.
+ * @param [res] - The `res` parameter is the response object that is used to send a response back to
+ * the client. It contains methods and properties that allow you to control the response, such as
+ * `json()` which is used to send a JSON response.
+ */
+const patch_user = async (req = reques, res = response) => {
+    try {
+        const { _uid, ...user } = req.body;
+        const user_db = await user_model.findByIdAndUpdate({ id: _uid}, user);
+        
+        log(user, user_db);
+        res.json({
+            message: '[SUCCESS] - PATCH USER SUCCESS',
+            data: user_db
+        });
+    } catch (error) {
+        log(error);
+        res.status(500).json({
+            message: '[ERROR] - PATCH USER ERROR',
+            error
+        });
+    }
+    
+}
+/**
  * Handles a DELETE request for deleting a
  * user and returns a JSON response with a success message and an empty data object.
  * @param [req] - The `req` parameter represents the request object, which contains information about
@@ -157,21 +183,6 @@ const delete_user = async (req = request, res = response) => {
             error: e
         });
     }
-}
-/**
- * Handles a PATCH request for updating a user
- * and returns a JSON response with a success message and an empty data object.
- * @param [req] - The `req` parameter represents the request object, which contains information about
- * the incoming HTTP request such as headers, query parameters, and request body.
- * @param [res] - The `res` parameter is the response object that is used to send a response back to
- * the client. It contains methods and properties that allow you to control the response, such as
- * `json()` which is used to send a JSON response.
- */
-const patch_user = (req = reques, res = response) => {
-    res.json({
-        message: 'PATCH - USER SUCCESS',
-        data: {}
-    });
 }
 
 module.exports = {
