@@ -3,6 +3,7 @@ const { log } = require('../helpers/log');
 const jwt = require('jsonwebtoken');
 const { JWTSECRET } = process.env;
 const user_model = require('../models/user');
+const user = require('../models/user');
 
 /**
  * Validate a JSON Web Token (JWT) in the `x-token` header of a
@@ -27,6 +28,11 @@ const validate_jwt = async (req , res = response, next) => {
     try {
         const { _uid } = jwt.verify(auth, JWTSECRET);
         const user_loged = await user_model.findById({ _id: _uid });
+        // verify user active false
+        if (!!!user.active) return res.status(401).json({
+            message: '[ERROR] - Invalid user <status>',
+            error: 'user already deleted <status> false'
+        });
         if (!!user_loged) req.user = user_loged;
         req.uid = _uid;
         next();
