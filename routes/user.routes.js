@@ -7,17 +7,18 @@ const {
     delete_user,
     patch_user
 } = require('../controller/user.controller');
-const ROLES = ['ADMIN_ROLE', 'USER_ROLE'];
-const {
-    validate_fields,
-    verify_email_exist
-} = require('../middlewares/email_validator');
 const {
     validate_rol,
     validate_user_id
 } = require('../helpers/db-validators');
-const { validate_jwt } = require('../middlewares/jwt.middleware');
-const { validate_admin_role } = require('../middlewares/role.middleware');
+const { 
+    validate_fields,
+    verify_email_exist,
+    validate_jwt,
+    validate_admin_role
+} = require('../middlewares/index');
+
+const ROLES = ['ADMIN_ROLE', 'USER_ROLE'];
 const user_router = new Router();
 
 // get

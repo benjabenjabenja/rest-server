@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- GOOGLE SIGN-IN -->
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    <title>Google Sing-in</title>
+</head>
+<body>
+
+    <h1>Google Sing-in</h1>
+    <br>
+    
+    <!-- data-login_uri="https://your.domain/your_login_endpoint" -->
+    <div id="g_id_onload"
+        data-client_id="265319437741-q187hovhhcbf3ghr8ttrcktd5pc4k51p.apps.googleusercontent.com"
+        data-auto_prompt="false"
+        data-callback="handleCredentialResponse">
+    </div>
+    <div class="g_id_signin"
+        data-type="standard"
+        data-size="large"
+        data-theme="outline"
+        data-text="sign_in_with"
+        data-shape="rectangular"
+        data-logo_alignment="left">
+    </div>
+
+    <script>
+        async function handleCredentialResponse(response) {
+            const g_token = response.credential;
+            console.log({ g_token });
+           
+            const url = 'http://localhost:3000/api/v1/auth/login/google';
+            const res = await fetch(url,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id_google: g_token })
+            }).then( res => res.json() );
+            
+        }
+      </script>
+</body>
+</html>

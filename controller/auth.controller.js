@@ -3,6 +3,7 @@ const { log } = require('../helpers/log');
 const { generate_jwt } = require('../helpers/jeisonguebtoken');
 const { compare_pass } = require('../helpers/encrypt');
 const user_model = require('../models/user');
+const { google_verify } = require('../helpers/google-verify');
 
 const login = async (req = request, res = response) => {
     try {
@@ -47,6 +48,28 @@ const login = async (req = request, res = response) => {
     }
 }
 
+const google_sing_in = async (req = request, res = response) => {
+
+    try {
+        const { id_google } = req.body;
+
+        const response = await google_verify(id_google);
+        
+        res.json({
+            message: "[SUCCESS] - GOOGLE SIGN-IN SUCCESS",
+            id_google
+        });
+    } catch (error) {
+        log(error);
+        res.status(500).json({
+            message: '[ERROR] - GOOGLE SIGN-IN ERROR',
+            error
+        });
+    }
+
+}
+
 module.exports = { 
-    login
+    login,
+    google_sing_in
 }

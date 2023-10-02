@@ -34,6 +34,7 @@ class Server {
     }
 
     routes = () => {
+        this.app.get('/', (req, res) => res.send( __dirname + 'public/index.html'));
         this.app.use(`${this.elements_routes_path}`, require('../routes/elements.routes'));       
         this.app.use(`${this.user_routes_path}`, require('../routes/user.routes'));     
         this.app.use(`${this.auth_path}`, require('../routes/auth'));
