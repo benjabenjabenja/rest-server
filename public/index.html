@@ -3,45 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- BOOTSTRAP CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <!-- GOOGLE SIGN-IN -->
     <script src="https://accounts.google.com/gsi/client" async></script>
     <title>Google Sing-in</title>
 </head>
 <body>
 
-    <h1>Google Sing-in</h1>
-    <br>
+    <main class="container">
+        <h2>Google Sing-in</h2>
+        <br>
     
-    <!-- data-login_uri="https://your.domain/your_login_endpoint" -->
-    <div id="g_id_onload"
-        data-client_id="265319437741-q187hovhhcbf3ghr8ttrcktd5pc4k51p.apps.googleusercontent.com"
-        data-auto_prompt="false"
-        data-callback="handleCredentialResponse">
-    </div>
-    <div class="g_id_signin"
-        data-type="standard"
-        data-size="large"
-        data-theme="outline"
-        data-text="sign_in_with"
-        data-shape="rectangular"
-        data-logo_alignment="left">
-    </div>
+        <div class="row">
+            <!-- SIGN IN GOOGLE -->
+            <div class="col-12">
+                 <!-- data-login_uri="https://your.domain/your_login_endpoint" -->
+                <div id="g_id_onload"
+                    data-client_id="265319437741-q187hovhhcbf3ghr8ttrcktd5pc4k51p.apps.googleusercontent.com"
+                    data-auto_prompt="false"
+                    data-callback="handleCredentialResponse">
+                </div>
+                <div class="g_id_signin"
+                    data-type="standard"
+                    data-size="large"
+                    data-theme="outline"
+                    data-text="sign_in_with"
+                    data-shape="rectangular"
+                    data-logo_alignment="left">
+                </div>
+            </div>
+            <!-- SIGN OUT -->
+            <div class="col-2 mt-2">
+                <button id="google_sign_out" class="btn btn-primary " (click)="on_signout()" type="button">
+                    Sign out
+                </button>
+            </div>
+        </div>
+    </main>
 
     <script>
         async function handleCredentialResponse(response) {
-            const g_token = response.credential;
-            console.log({ g_token });
-           
+            const g_token = response.credential;           
             const url = 'http://localhost:3000/api/v1/auth/login/google';
-            const res = await fetch(url,{
+            fetch(url,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ id_google: g_token })
-            }).then( res => res.json() );
+            }).then( res => res.json() )
+            .then( res => {
+                console.log(res);
+                localStorage.setItem('e', res.user_db.email)
+            })
+            .catch(console.warn);
             
         }
+
+        const signout = document.getElementById("google_sign_out");
+        signout.onclick = () => {
+            // console.log(google.accounts.id);
+            google.accounts.id.disableAutoSelect();
+            google.accounts.id.revoke( localStorage.getItem('e'), d1 => {
+                localStorage.clear();
+                location.reload();
+            });
+        }
       </script>
+      <!-- BOOTSTRAP SCRIPT -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+      
 </body>
 </html>

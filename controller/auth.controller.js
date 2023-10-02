@@ -53,11 +53,36 @@ const google_sing_in = async (req = request, res = response) => {
     try {
         const { id_google } = req.body;
 
-        const response = await google_verify(id_google);
-        
+        const { username, email, image } = await google_verify(id_google);
+
+        let user_db = await user_model.findOne({ email, active: true });
+        // user no exist
+        if (!!!user_db) {
+            const to_save = {
+                username,
+                email,
+                password: ':B',
+                image,
+                google: true,
+                role: 'USER_ROLE'
+            };
+            user_db = new user_model(to_save);
+            await user_db.save();
+        }
+        // user <status> active = false
+        if (!!!user_db?.active) {
+            return res.status(401).json({
+                message: '[ERROR] - USER STATUS FAIL',
+                error: 'user <status> || <active> => false'
+            })
+        }
+        // generate token
+        const { token } = await generate_jwt(user_db.id);
+
         res.json({
             message: "[SUCCESS] - GOOGLE SIGN-IN SUCCESS",
-            id_google
+            token,
+            user_db
         });
     } catch (error) {
         log(error);
