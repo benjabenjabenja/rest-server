@@ -29,12 +29,21 @@ const get_category_by_id = async (req = request, res = response) => {
 
 const post_category = async (req = request, res = response) => {
     res.json({
-        message: "[SUCCESS] - POST CATEGORY SUCCESS"
+        message: "[SUCCESS] - POST CATEGORY SUCCESS",
+        category: {}
+    });
+};
+
+const put_category = async (req = request, res = response) => {
+    res.json({
+        message: "[SUCCESS] - PUT CATEGORY SUCCESS",
+        category: {}
     });
 }
 
 module.exports = {
     get_categories,
     get_category_by_id,
-    post_category
+    post_category,
+    put_category
 }
