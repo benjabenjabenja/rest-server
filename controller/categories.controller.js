@@ -41,9 +41,17 @@ const put_category = async (req = request, res = response) => {
     });
 }
 
+const delete_category = async (req = request, res = response) => {
+    res.json({
+        message: "[SUCCESS]- DELETE CATEGORY SUCCESS",
+        data: {}
+    });
+}
+
 module.exports = {
     get_categories,
     get_category_by_id,
     post_category,
-    put_category
+    put_category,
+    delete_category
 }

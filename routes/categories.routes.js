@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { validate_fields, validate_jwt, validate_admin_role } = require('../middlewares');
-const { get_categories, get_category_by_id, post_category, put_category } = require('../controller/categories.controller');
+const { get_categories, get_category_by_id, post_category, put_category, delete_category } = require('../controller/categories.controller');
 const { validate_category } = require('../middlewares/category.middleware');
 const { validate_user_id } = require('../helpers/db-validators');
 
@@ -33,5 +33,13 @@ categories_router.put('/put/:id', [
     check('id').custom(validate_user_id),
     validate_fields,
 ], put_category);
+
+categories_router.delete('/delete/:id',[
+    validate_jwt,
+    validate_admin_role,
+    check('id', 'Invalid id').isMongoId(),
+    check('id').custom(validate_user_id),
+    validate_fields,
+], delete_category);
 
 module.exports = categories_router
