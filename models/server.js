@@ -13,9 +13,12 @@ class Server {
         // add port to listen
         this.port = process?.env.PORT || 3001;
         // declare routes
-        this.elements_routes_path = `${ROOT_PATH_API}/elements`;
-        this.user_routes_path = `${ROOT_PATH_API}/user`;
-        this.auth_path = `${ROOT_PATH_API}/auth`;
+        this.paths = {
+            categories: `${ROOT_PATH_API}/categories`,
+            elements  : `${ROOT_PATH_API}/elements`,
+            user      : `${ROOT_PATH_API}/user`,
+            auth      : `${ROOT_PATH_API}/auth`,
+        }
         // conneccion db
         this._db_connect();
         // middelwares
@@ -34,10 +37,11 @@ class Server {
     }
 
     routes = () => {
+        this.app.use(this.paths.elements, require('../routes/elements.routes'));       
+        this.app.use(this.paths.user, require('../routes/user.routes'));     
+        this.app.use(this.paths.auth, require('../routes/auth'));
+        this.app.use(this.paths.categories, require('../routes/categories.routes'));
         this.app.get('/', (req, res) => res.send( __dirname + 'public/index.html'));
-        this.app.use(`${this.elements_routes_path}`, require('../routes/elements.routes'));       
-        this.app.use(`${this.user_routes_path}`, require('../routes/user.routes'));     
-        this.app.use(`${this.auth_path}`, require('../routes/auth'));
         this.app.get('*', (req, res) => { res.status(404).send('404 | Not Found') });
     }
 
