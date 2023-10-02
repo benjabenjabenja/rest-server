@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const categories_schema = new Schema({
+const category_schema = new Schema({
     name: {
         type: String,
         required: [true, 'field <name> is required'],
@@ -8,12 +8,16 @@ const categories_schema = new Schema({
     tag: {
         type: String,
         required:[ true,'field <tag> is required']
+    },
+    active: {
+        type: Boolean,
+        default: true
     }
 });
 
-categories_schema.methods.toJSON = function () {
+category_schema.methods.toJSON = function () {
     const { __v, _id, ...category } = this.toObject();
     return { ...category, _uid: _id };
 };
 
-module.exports = model('Categories', categories_schema);
+module.exports = model('Categories', category_schema);
