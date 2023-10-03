@@ -5,6 +5,16 @@ const { compare_pass } = require('../helpers/encrypt');
 const user_model = require('../models/user');
 const { google_verify } = require('../helpers/google-verify');
 
+/**
+ * Handles user login by verifying the username or email, checking
+ * the user's status, verifying the password, and generating a token if successful.
+ * @param [req] - The `req` parameter represents the request object, which contains information about
+ * the incoming HTTP request such as headers, body, and query parameters.
+ * @param [res] - The `res` parameter is the response object that is used to send the response back to
+ * the client. It is an instance of the `response` object from the Express framework.
+ * @returns a JSON response with a message and a token if the login is successful. If there is an
+ * error, it returns a JSON response with an error message.
+ */
 const login = async (req = request, res = response) => {
     try {
         const { username = '', password = '' } = req.body;
@@ -48,6 +58,15 @@ const login = async (req = request, res = response) => {
     }
 }
 
+/**
+ * Handles the sign-in process using Google authentication.
+ * @param [req] - The `req` parameter represents the request object, which contains information about
+ * the incoming HTTP request. It includes details such as the request headers, request body, request
+ * method, and request URL.
+ * @param [res] - The `res` parameter is the response object that is used to send the response back to
+ * the client. It is an instance of the `response` object from the Express framework.
+ * @returns a JSON response with a success message, a token, and the user_db object.
+ */
 const google_sing_in = async (req = request, res = response) => {
 
     try {

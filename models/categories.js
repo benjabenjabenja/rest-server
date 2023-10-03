@@ -12,6 +12,11 @@ const category_schema = new Schema({
     active: {
         type: Boolean,
         default: true
+    },
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'field <user> is required']
     }
 });
 

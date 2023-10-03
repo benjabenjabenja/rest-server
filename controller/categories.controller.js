@@ -1,5 +1,6 @@
 const { request, response } = require("express");
 const { log } = require("../helpers/log");
+const { Category } = require("../models");
 
 
 const get_categories = async (req = request, res = response) => {
@@ -28,10 +29,37 @@ const get_category_by_id = async (req = request, res = response) => {
 };
 
 const post_category = async (req = request, res = response) => {
-    res.json({
-        message: "[SUCCESS] - POST CATEGORY SUCCESS",
-        category: {}
-    });
+    try {
+        const { name, tag, user } = req.body;
+        const category_db = await Category.findOne({ name: name.toUpperCase(), tag });
+        
+        if (!!category_db) return res.status(400).json({
+            message: "[ERROR]-CATEGORY ALREADY EXIST",
+            error: `<name> ${name} already exist`
+        });
+
+        const data_category = {
+            name,
+            tag,
+            user: user._id
+        };
+
+        const new_category = await new Category(data_category);
+        await new_category.save();
+
+        res.status(201).json({
+            message: "[SUCCESS] - POST CATEGORY SUCCESS",
+            category: new_category
+        });
+
+    } catch (error) {
+        log(error)
+        res.status(500).json({
+            message: "[ERROR] - POST CATEGORY ERROR",
+            error
+        });
+    }
+   
 };
 
 const put_category = async (req = request, res = response) => {
